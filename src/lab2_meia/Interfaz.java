@@ -21,6 +21,10 @@ import javax.swing.JOptionPane;
  */
 public class Interfaz extends javax.swing.JFrame {
 ArrayList<Integer> numeros = new ArrayList<>();
+String pathPuntuacion = Paths.get("C:/MEIA/puntuacion.txt").toString();
+String pathResultado = Paths.get("C:/MEIA/resulta.txt").toString();
+
+
     /**
      * Creates new form Interfaz
      */
@@ -96,17 +100,25 @@ ArrayList<Integer> numeros = new ArrayList<>();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      int puntuacion = 0;
-        String path = Paths.get("C:/MEIA/puntuacion.txt").toString();
-      LecturaArchivo(path);
+     int puntuacion = 0;
+     LecturaArchivo(pathPuntuacion);
      String contrasenia =  TxtContra.getText();
      if(contrasenia.length() >= numeros.get(0)){
          puntuacion = numeros.get(1) * contrasenia.length();
+         ArrayList<String> contadorMayus = new ArrayList<>();
+         for (int i = 0; i < contrasenia.length(); i++) {
+             if((Integer.valueOf(contrasenia.charAt(i))>64) && (Integer.valueOf(contrasenia.charAt(i))<91))
+             {
+                 contadorMayus.add(String.valueOf(contrasenia.charAt(i)));
+             }
+         }
+         puntuacion = puntuacion +   (numeros.get(2)*contadorMayus.size());  
+         puntuacion = puntuacion + (contrasenia.length() + numeros.get(3));
+         puntuacion = puntuacion;//contador de numeros
          
      } else {
           JOptionPane.showMessageDialog(null, "El largo de la con debe ser de al menos:" + numeros.get(0).toString() + " " + "caracteres");
-     }
-      
+     }      
     }//GEN-LAST:event_jButton1ActionPerformed
   private int CantMayusculas(String cadena){
       
