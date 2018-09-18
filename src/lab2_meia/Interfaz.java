@@ -6,6 +6,7 @@
 package lab2_meia;
 
 
+import java.awt.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,8 +29,8 @@ ArrayList<Integer> numeros = new ArrayList<>();
 String pathPuntuacion = Paths.get("C:/MEIA/puntuacion.txt").toString();
 String pathResultado = Paths.get("C:/MEIA/resultado.txt").toString();
 String pathUsuario = Paths.get("C:/MEIA/usuario.txt").toString();
-
 String especiales = "/¿?%$#";
+ArrayList<Integer> limites = new ArrayList<>();
 
 
     /**
@@ -222,14 +223,19 @@ String especiales = "/¿?%$#";
       return 0;
   }
   private int SecurityCode(int puntuacion){
-      if(puntuacion>0 && puntuacion<=25){
+      
+      LecturaArchivoResultado(pathResultado);
+      if(puntuacion>limites.get(0) && puntuacion<=limites.get(1)){
           return 1;
-      } else if(puntuacion>25 && puntuacion<=35){
+      } else if(puntuacion>limites.get(2) && puntuacion<=limites.get(3)){
           return 2;
-      } else if(puntuacion>35 && puntuacion<=50){
+      } else if(puntuacion>limites.get(4) && puntuacion<=limites.get(5)){
           return 3;
-      } else {
+      } else if(puntuacion>limites.get(6) && puntuacion<=limites.get(7)){
           return 4;
+      }
+      else{
+          return 0;
       }
   }
   
@@ -274,7 +280,30 @@ String especiales = "/¿?%$#";
       
                JOptionPane.showMessageDialog(null, "Error al leer archivo");
     }
-}
+    }
+    
+    private void LecturaArchivoResultado(String path){
+    StringBuilder text = new StringBuilder();
+    try{
+        FileReader lectura = new FileReader(path);
+        BufferedReader buffer = new BufferedReader(lectura);
+        String cadena;
+        while((cadena = buffer.readLine())!= null){
+            String[] split = cadena.split(",");
+            limites.add(Integer.parseInt(split[0]));
+            limites.add(Integer.parseInt(split[1]));
+        }
+
+        
+    }catch(Exception e){
+      
+               JOptionPane.showMessageDialog(null, "Error al leer archivo");
+    }
+    }
+    
+    
+    
+    
     private boolean Isnumber(String counter){
         try{
             int m8 = Integer.parseInt(counter);
