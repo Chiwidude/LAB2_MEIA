@@ -15,7 +15,8 @@ public class Lab2_MEIA {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        Interfaz interfaz_ = new Interfaz();
+        interfaz_.show();
     }
     
 }

@@ -26,7 +26,9 @@ import javax.xml.bind.DatatypeConverter;
 public class Interfaz extends javax.swing.JFrame {
 ArrayList<Integer> numeros = new ArrayList<>();
 String pathPuntuacion = Paths.get("C:/MEIA/puntuacion.txt").toString();
-String pathResultado = Paths.get("C:/MEIA/resulta.txt").toString();
+String pathResultado = Paths.get("C:/MEIA/resultado.txt").toString();
+String pathUsuario = Paths.get("C:/MEIA/usuario.txt").toString();
+
 String especiales = "/¿?%$#";
 
 
@@ -152,18 +154,44 @@ String especiales = "/¿?%$#";
           switch(code){
               case 1:
                    JOptionPane.showMessageDialog(null, "Contraseña insegura");
-                  
+                  TxtContra.setText("");
                   break;
               case 2:
                    JOptionPane.showMessageDialog(null, "Contraseña poco segura");
                     jLabel1.setText("Contraseña poco segura");
+                    TxtContra.setText("");
                   break;
               case 3:
                    JOptionPane.showMessageDialog(null, "Contraseña segura");
                     jLabel1.setText("Contraseña segura");
+                    TxtContra.setText("");
                     
                     try{
-                    FileWriter result = new FileWriter(pathResultado);
+                    FileWriter result = new FileWriter(pathUsuario,true);
+                    BufferedWriter writer = new BufferedWriter(result);
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    md.update(contrasenia.getBytes());
+                    byte[] digest = md.digest();
+                    String myHash = DatatypeConverter.printHexBinary(digest).toUpperCase();
+                    StringBuilder passstring = new StringBuilder();
+                    passstring.append(contrasenia);
+                    passstring.append(":");
+                    passstring.append(myHash);
+                    writer.write(passstring.toString());
+                    writer.newLine();   
+                    writer.close();
+                    result.close();
+                    TxtContra.setText("");
+                    
+                    }catch(Exception e){
+                        
+                    }
+                    
+                  break;
+              case 4: 
+                   JOptionPane.showMessageDialog(null, "Contraseña Muy Segura");
+                    try{
+                    FileWriter result = new FileWriter(pathUsuario,true);
                     BufferedWriter writer = new BufferedWriter(result);
                     MessageDigest md = MessageDigest.getInstance("MD5");
                     md.update(contrasenia.getBytes());
@@ -177,14 +205,11 @@ String especiales = "/¿?%$#";
                     writer.newLine();
                     writer.close();
                     result.close();
+                    TxtContra.setText("");
                     
                     }catch(Exception e){
                         
                     }
-                    
-                  break;
-              case 4: 
-                   JOptionPane.showMessageDialog(null, "Contraseña Muy Segura");
                   break;
               
           }
