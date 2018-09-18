@@ -7,13 +7,17 @@ package lab2_meia;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -23,6 +27,7 @@ public class Interfaz extends javax.swing.JFrame {
 ArrayList<Integer> numeros = new ArrayList<>();
 String pathPuntuacion = Paths.get("C:/MEIA/puntuacion.txt").toString();
 String pathResultado = Paths.get("C:/MEIA/resulta.txt").toString();
+String especiales = "/¿?%$#";
 
 
     /**
@@ -113,9 +118,76 @@ String pathResultado = Paths.get("C:/MEIA/resulta.txt").toString();
              }
          }
          puntuacion = puntuacion +   (numeros.get(2)*contadorMayus.size());  
-         puntuacion = puntuacion + (contrasenia.length() + numeros.get(3));
-         puntuacion = puntuacion;//contador de numeros
+         int counter = 0;
+         for(int i =0;i<contrasenia.length();i++){
+         if((!especiales.contains(String.valueOf(contrasenia.charAt(i))))||Isnumber(String.valueOf(contrasenia.charAt(i)))== false){
+             counter++;
+         }
+     }
+        
+         puntuacion = puntuacion + (counter + numeros.get(3));
+          counter = 0;
+          for(int  i = 0; i<contrasenia.length();i++){
+         if(Isnumber(String.valueOf(contrasenia.charAt(i)))){
+             counter++;
+         }
          
+     }
+         puntuacion = puntuacion+(counter+numeros.get(4));
+         counter = 0;
+         for(int i = 0;i<contrasenia.length();i++){
+             if(especiales.contains(String.valueOf(contrasenia.charAt(i)))){
+                 counter++;
+             }
+         }
+          puntuacion = puntuacion+counter*(contrasenia.length()+numeros.get(5));
+          if(counter == 0){
+              if(onlyNumbers(contrasenia)== true){
+                  puntuacion= puntuacion -numeros.get(7);
+              } else if(onlyLetters(contrasenia)==true){
+                  puntuacion = puntuacion - numeros.get(6);
+              }
+          }
+          int code = SecurityCode(puntuacion);
+          switch(code){
+              case 1:
+                   JOptionPane.showMessageDialog(null, "Contraseña insegura");
+                  
+                  break;
+              case 2:
+                   JOptionPane.showMessageDialog(null, "Contraseña poco segura");
+                    jLabel1.setText("Contraseña poco segura");
+                  break;
+              case 3:
+                   JOptionPane.showMessageDialog(null, "Contraseña segura");
+                    jLabel1.setText("Contraseña segura");
+                    
+                    try{
+                    FileWriter result = new FileWriter(pathResultado);
+                    BufferedWriter writer = new BufferedWriter(result);
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    md.update(contrasenia.getBytes());
+                    byte[] digest = md.digest();
+                    String myHash = DatatypeConverter.printHexBinary(digest).toUpperCase();
+                    StringBuilder passstring = new StringBuilder();
+                    passstring.append(contrasenia);
+                    passstring.append(":");
+                    passstring.append(myHash);
+                    writer.write(passstring.toString());
+                    writer.newLine();
+                    writer.close();
+                    result.close();
+                    
+                    }catch(Exception e){
+                        
+                    }
+                    
+                  break;
+              case 4: 
+                   JOptionPane.showMessageDialog(null, "Contraseña Muy Segura");
+                  break;
+              
+          }
      } else {
           JOptionPane.showMessageDialog(null, "El largo de la con debe ser de al menos:" + numeros.get(0).toString() + " " + "caracteres");
      }      
@@ -123,6 +195,44 @@ String pathResultado = Paths.get("C:/MEIA/resulta.txt").toString();
   private int CantMayusculas(String cadena){
       
       return 0;
+  }
+  private int SecurityCode(int puntuacion){
+      if(puntuacion>0 && puntuacion<=25){
+          return 1;
+      } else if(puntuacion>25 && puntuacion<=35){
+          return 2;
+      } else if(puntuacion>35 && puntuacion<=50){
+          return 3;
+      } else {
+          return 4;
+      }
+  }
+  
+  private boolean onlyNumbers(String cadena){
+      int c = 0;
+      for(int i = 0; i<cadena.length();i++){
+          if(Isnumber(String.valueOf(cadena.charAt(i)))){
+              c++;
+          }
+      }
+      if(c==cadena.length()){
+          return true;
+      } else {
+          return false;
+      }
+  }
+  private boolean onlyLetters(String cadena){
+      int c = 0;
+      for(int i = 0; i<cadena.length();i++){
+         if(Character.isLetter(cadena.charAt(i))==true){
+             c++;
+         }
+      }
+      if(c==cadena.length()){
+          return true;
+      } else {
+          return false;
+      }
   }
     private void LecturaArchivo(String path){
     StringBuilder text = new StringBuilder();
@@ -140,6 +250,15 @@ String pathResultado = Paths.get("C:/MEIA/resulta.txt").toString();
                JOptionPane.showMessageDialog(null, "Error al leer archivo");
     }
 }
+    private boolean Isnumber(String counter){
+        try{
+            int m8 = Integer.parseInt(counter);
+        }catch(Exception e){
+            return false;
+
+    }
+        return true;
+    }
     /**
      * @param args the command line arguments
      */
